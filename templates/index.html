@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 實境猜拳 (Rock Paper Scissors AR)</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Google Fonts for Premium Look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- MediaPipe Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Stats Panel -->
+        <aside class="sidebar">
+            <h1 class="logo">AR 猜拳大戰</h1>
+            
+            <div class="score-card">
+                <div class="score-item">
+                    <span class="label">玩家 (Player)</span>
+                    <span class="value" id="player-score">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="label">電腦 (AI)</span>
+                    <span class="value" id="ai-score">0</span>
+                </div>
+            </div>
+
+            <div class="game-info">
+                <p>目標: <span id="max-wins-display">3</span> 勝</p>
+                <p>回合: <span id="current-round">1</span></p>
+            </div>
+
+            <div class="charts-container">
+                <canvas id="statsChart"></canvas>
+            </div>
+
+            <div class="history-log">
+                <h3>即時戰報</h3>
+                <ul id="battle-log">
+                    <li>等待遊戲開始...</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Game Area -->
+        <main class="game-area">
+            <div class="video-container">
+                <video class="input_video" style="display: none;"></video>
+                <canvas class="output_canvas"></canvas>
+                
+                <!-- Overlays -->
+                <div id="countdown-overlay" class="overlay hidden">3</div>
+                <div id="result-overlay" class="overlay hidden">
+                    <div class="result-text" id="result-text">WIN</div>
+                    <div class="result-details">
+                        <span id="p-move">✊</span> vs <span id="ai-move">✌️</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="mode-select">
+                    <label>AI 難度:</label>
+                    <select id="ai-difficulty">
+                        <option value="random">隨機模式 (Random)</option>
+                        <option value="smart" selected>智能模式 (Smart AI)</option>
+                    </select>
+                </div>
+                
+                <div class="settings">
+                    <label>勝利局數: <input type="number" id="winning-score-input" value="3" min="1" max="10"></label>
+                </div>
+
+                <div class="actions">
+                    <button id="start-btn" class="btn primary">開始遊戲</button>
+                    <button id="play-hand-btn" class="btn secondary" disabled>開始出拳</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="final-result-title">VICTORY!</h2>
+            <p id="final-score-text">3 - 1</p>
+            <button id="restart-btn" class="btn primary">再來一局</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>
